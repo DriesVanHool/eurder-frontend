@@ -36,3 +36,83 @@
     transform: rotate(360deg);
   }
 }
+
+.container-fluid{
+  margin-top: 30px;
+  max-width: 1300px;
+}
+
+.loader{
+  margin-top: 100px;
+}
+
+.form-label{
+  width: 100%;
+}
+
+.label{
+  color: lightgray;
+  padding-top: 10px;
+  justify-content: right;
+  text-align: center;
+  float: right;
+  font-size: 15px;
+  padding: 5px;
+}
+
+.banner{
+  padding: 20px;
+  overflow: hidden;
+}
+
+.banner h1{
+  float: left;
+}
+
+#searchInput {
+  padding-top: 10px;
+  justify-content: right;
+  text-align: center;
+  float: right;
+}
+
+.item{
+  cursor: pointer;
+}
+
+.item:hover{
+  box-shadow: 5px 5px 5px lightgray;
+}
+
+.formBtn{
+  margin-right: 10px;
+}
+
+.bntColumn{
+  text-align: center;
+}
+
+.bntColumn button{
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.formHalfRow{
+  width: 50%;
+}
+
+
+@media only screen and (max-width: 480px), only screen and (max-device-width: 480px) {
+  .frormHalfRow{
+    width: 100%;
+  }
+
+}
+
+form{
+  padding: 20px
+}
+
+tr{
+  cursor: pointer;
+}
