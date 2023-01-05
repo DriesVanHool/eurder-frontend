@@ -1,13 +1,16 @@
-import {Link, useNavigate} from "react-router-dom";
-import {useEffect, useState} from "react";
-import {Button, Col, Form, InputGroup, Row} from "react-bootstrap";
-import {addItem, updateItem} from "../api/ItemService";
+import {Link, useLocation, useNavigate} from "react-router-dom";
+import {useState} from "react";
+import {Alert, Button, Col, Form, Row} from "react-bootstrap";
+import {Country} from "../models/Country";
+import {setCustomerData} from "../models/CustomerComplete";
+import {addCustomer, updateCustomer} from "../api/CustomerService";
 
 function CustomerDetail({selectedCustomer}) {
-    const navigate = useNavigate()
-    const [errorMessage, setErrorMessage] = useState("")
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [errorMessage, setErrorMessage] = useState("");
     const [validated, setValidated] = useState(false);
-    const [editMode, setEditMode] = useState(!selectedCustomer);
+    const [editMode, setEditMode] = useState(!selectedCustomer || location.state?.editMode);
 
     const defaultFormFields = selectedCustomer ? {
         firstname: selectedCustomer.firstname,
@@ -36,10 +39,12 @@ function CustomerDetail({selectedCustomer}) {
     }
 
     const [formValue, setFormValue] = useState(defaultFormFields)
-    useEffect(() => console.log(formValue), [formValue])
     const handleChange = (e) => {
         const {name, value} = e.target;
-        console.log(name)
+        if (name === "complete") {
+            formValue.domain = value.substring(value.indexOf('@') + 1)
+            formValue.localPart = value.substring(0, value.indexOf('@'))
+        }
         setFormValue(
             {
                 ...formValue,
@@ -62,13 +67,14 @@ function CustomerDetail({selectedCustomer}) {
 
     const handleSubmit = (e) => {
         e.preventDefault()
+        const customer = setCustomerData({...formValue})
         if (!selectedCustomer) {
-            addItem({...formValue})
+            addCustomer(customer)
                 .then(setEditMode(false))
                 .then((result) => navigate(`/customers/${result.data.id}`, {replace: true}), [navigate])
                 .catch((error) => setErrorMessage(error.response.data.message))
         } else {
-            updateItem(selectedCustomer.id, {...formValue})
+            updateCustomer(selectedCustomer.id, customer)
                 .then(setEditMode(false))
                 .then((result) => navigate(`/customers/${result.data.id}`, {replace: true}), [navigate])
                 .catch((error) => setErrorMessage(error.response.data.message))
@@ -88,6 +94,14 @@ function CustomerDetail({selectedCustomer}) {
                 {selectedCustomer ? (
                     <span className="label">{selectedCustomer.id}</span>) : null}
             </div>
+            {
+                errorMessage.length > 0 ? (
+                    <Alert variant="danger" onClose={() => setErrorMessage("")} dismissible>
+                        <Alert.Heading>Incorrect input</Alert.Heading>
+                        <p>{errorMessage}</p>
+                    </Alert>
+                ) : null
+            }
             <Form noValidate validated={validated} onSubmit={handleValidation}>
                 <fieldset disabled={!editMode}>
                     <Row>
@@ -114,16 +128,97 @@ function CustomerDetail({selectedCustomer}) {
                             </Form.Group>
                         </Col>
                     </Row>
-
                     <Form.Group className="mb-3">
                         <Form.Label>Email address</Form.Label>
-                        <Form.Control type="email" name="complete" placeholder="Enter email"
+                        <Form.Control type="email" name="complete"
                                       value={formValue.complete} onChange={handleChange}
                                       required/>
                         <Form.Control.Feedback type="invalid">
                             Email adress incorrect.
                         </Form.Control.Feedback>
                     </Form.Group>
+
+                    <Row>
+                        <Col className="col-2">
+                            <Form.Group className="mb-3">
+                                <Form.Label>Phonenumber</Form.Label>
+                                <Form.Control name="countryCallingCode" value={formValue.countryCallingCode}
+                                              onChange={handleChange}
+                                              required/>
+                                <Form.Control.Feedback type="invalid">
+                                    Please provide a countrycode.
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                        </Col>
+                        <Col>
+                            <Form.Group className="mb-3">
+                                <Form.Label>&nbsp;</Form.Label>
+                                <Form.Control name="number" value={formValue.number}
+                                              onChange={handleChange}
+                                              required/>
+                                <Form.Control.Feedback type="invalid">
+                                    Please provide a number.
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                        </Col>
+                    </Row>
+
+                    <Row>
+                        <Col>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Street</Form.Label>
+                                <Form.Control name="streetName" value={formValue.streetName}
+                                              onChange={handleChange}
+                                              required/>
+                                <Form.Control.Feedback type="invalid">
+                                    Please provide a street.
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                        </Col>
+                        <Col className="col-2">
+                            <Form.Group className="mb-3">
+                                <Form.Label>Number</Form.Label>
+                                <Form.Control name="houseNumber" value={formValue.houseNumber}
+                                              onChange={handleChange}
+                                              required/>
+                                <Form.Control.Feedback type="invalid">
+                                    Please provide a housenumber.
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                        </Col>
+                    </Row>
+
+                    <Row>
+                        <Col className="col-3">
+                            <Form.Group className="mb-3">
+                                <Form.Label>Postalcode</Form.Label>
+                                <Form.Control name="postalCode" value={formValue.postalCode}
+                                              onChange={handleChange}
+                                              required/>
+                                <Form.Control.Feedback type="invalid">
+                                    Please provide a postalcode.
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                        </Col>
+                        <Col>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Country</Form.Label>
+                                <Form.Select name="country" onChange={handleChange}
+                                             value={formValue.country} required>
+                                    <option value="">-</option>
+                                    {
+                                        Object.values(Country).map((country) => (
+                                            <option key={country.key}
+                                                    value={country}>{country}</option>
+                                        ))
+                                    }
+                                </Form.Select>
+                                <Form.Control.Feedback type="invalid">
+                                    Please provide a country.
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                        </Col>
+                    </Row>
                 </fieldset>
                 {
                     selectedCustomer && editMode ? (

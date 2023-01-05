@@ -63,7 +63,7 @@ function CustomerTable() {
                                         <Link to={`/customers/${customer.id}`}>
                                             <Button variant="secondary" size="sm">View</Button>
                                         </Link>
-                                        <Link to={`/customers/${customer.id}`}>
+                                        <Link to={`/customers/${customer.id}`}  state={{ editMode: true }}>
                                             <Button variant="info" size="sm">Edit</Button>
                                         </Link>
                                     </td>
