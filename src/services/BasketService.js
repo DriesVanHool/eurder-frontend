@@ -39,5 +39,5 @@ export function updateItemsBasket(items){
 }
 
 export function resetItemBasket(){
-    sessionStorage.setItem("basketItems", []);
+    sessionStorage.removeItem('basketItems');
 }
