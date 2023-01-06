@@ -17,7 +17,8 @@ function ItemPage() {
     }
     return (
         <>
-            {selectedItem || add ? (
+            {
+                selectedItem || add ? (
                 <ItemDetail selectedItem={selectedItem}/>
             ): (
             <ItemGallery/>

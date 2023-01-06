@@ -1,5 +1,5 @@
 import logo from '../assets/images/order.png'
-import {Nav} from "react-bootstrap";
+import {Button, Nav} from "react-bootstrap";
 
 function Header() {
     return (
@@ -20,6 +20,11 @@ function Header() {
             <Nav.Item className="nav-item">
                 <Nav.Link href="/customers" className="nav-link">
                         Customers
+                </Nav.Link>
+            </Nav.Item>
+            <Nav.Item className="nav-item">
+                <Nav.Link href="/basket" className="nav-link">
+                    <Button>Basket</Button>
                 </Nav.Link>
             </Nav.Item>
         </Nav>

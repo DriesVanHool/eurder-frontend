@@ -7,6 +7,7 @@ import ItemPage from "./components/ItemPage";
 import ItemDetail from "./components/ItemDetail";
 import CustomerPage from "./components/CustomerPage";
 import CustomerDetail from "./components/CustomerDetail";
+import Basket from "./components/Basket";
 
 function App() {
     return (
@@ -23,6 +24,7 @@ function App() {
                                 <Route exact path="/items/add" element={<ItemDetail/>}/>
                                 <Route exact path="/customers/:id?" element={<CustomerPage/>}/>
                                 <Route exact path="/customers/add" element={<CustomerDetail/>}/>
+                                <Route exact path="/basket" element={<Basket/>}/>
                                 <Route path="*" element={<Navigate to="/"/>}/>
                             </Routes>
                         </BrowserRouter>

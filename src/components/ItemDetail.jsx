@@ -2,10 +2,12 @@ import {useState} from "react";
 import {Alert, Button, Col, Form, Row} from "react-bootstrap";
 import {Link, useNavigate} from "react-router-dom";
 import {addItem, updateItem} from "../api/ItemService";
+import {addToBasket} from "../services/BasketService";
 
 function ItemDetail({selectedItem}) {
     const navigate = useNavigate()
     const [errorMessage, setErrorMessage] = useState("")
+    const [addMessage, setAddMessage] = useState("")
     const [validated, setValidated] = useState(false);
     const [descriptionCount, setDescriptionCount] = useState(selectedItem ? selectedItem.description.length : 0);
     const [editMode, setEditMode] = useState(!selectedItem);
@@ -27,7 +29,7 @@ function ItemDetail({selectedItem}) {
 
     const handleChange = (e) => {
         const {name, value} = e.target;
-        if (name === "description"){
+        if (name === "description") {
             setDescriptionCount(value.length)
         }
         setFormValue(
@@ -43,7 +45,7 @@ function ItemDetail({selectedItem}) {
         if (form.checkValidity() === false) {
             e.preventDefault();
             e.stopPropagation();
-        }else{
+        } else {
             handleSubmit(e)
         }
 
@@ -68,8 +70,10 @@ function ItemDetail({selectedItem}) {
 
     const toggleToEdit = (e) => {
         e.preventDefault()
-        editMode? setEditMode(false): setEditMode(true);
+        editMode ? setEditMode(false) : setEditMode(true);
     }
+
+
 
     return (
         <>
@@ -78,6 +82,13 @@ function ItemDetail({selectedItem}) {
                 {selectedItem ? (
                     <span className="label">{selectedItem.id}</span>) : null}
             </div>
+            {
+                addMessage.length > 0 ? (
+                    <Alert variant={addMessage==="Item added"? "success":"danger"} onClose={() => setAddMessage("")} dismissible>
+                        <p>{addMessage}</p>
+                    </Alert>
+                ) : null
+            }
             {
                 errorMessage.length > 0 ? (
                     <Alert variant="danger" onClose={() => setErrorMessage("")} dismissible>
@@ -98,7 +109,8 @@ function ItemDetail({selectedItem}) {
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label htmlFor="descriptionInput">Description</Form.Label>
-                        <Form.Control id="descriptionInput" as="textarea" name="description" maxLength={maxCount} rows={5}
+                        <Form.Control id="descriptionInput" as="textarea" name="description" maxLength={maxCount}
+                                      rows={5}
                                       value={formValue.description}
                                       onChange={handleChange} required/>
                         <Form.Control.Feedback type="invalid">
@@ -124,23 +136,26 @@ function ItemDetail({selectedItem}) {
                                               onChange={handleChange}
                                               required min="0"/>
                                 <Form.Control.Feedback type="invalid">
-                                Amount is invalid.
-                            </Form.Control.Feedback>
+                                    Amount is invalid.
+                                </Form.Control.Feedback>
                             </Col>
                         </Row>
                     </Form.Group>
                 </fieldset>
                 {
-                    selectedItem && editMode ?(
-                        <Button className="btn-secondary formBtn" onClick={(e)=>toggleToEdit(e)}>Cancel</Button>
+                    selectedItem && editMode ? (
+                        <Button className="btn-secondary formBtn" onClick={(e) => toggleToEdit(e)}>Cancel</Button>
                     ) : <Link to="/items">
                         <Button type="submit" className="btn-secondary formBtn">Back</Button>
                     </Link>
                 }
                 {
-                    editMode ?(
+                    editMode ? (
                         <Button type="submit" className="formBtn">Confirm</Button>
-                    ) : <Button className="formBtn" onClick={(e)=>toggleToEdit(e)}>Edit</Button>
+                    ) : <>
+                        <Button className="formBtn" onClick={(e) => toggleToEdit(e)}>Edit</Button>
+                        <Button className="btn-success formBtn addBtn" onClick={()=>setAddMessage(addToBasket(selectedItem))}>Add to basket</Button>
+                    </>
                 }
             </Form>
         </>

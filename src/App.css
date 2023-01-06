@@ -116,3 +116,13 @@ form{
 tr{
   cursor: pointer;
 }
+
+.addBtn{
+  float: right;
+}
+
+.modalOrder{
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}

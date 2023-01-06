@@ -1,6 +1,5 @@
 import {useEffect, useState} from "react";
 import {getItems} from "../api/ItemService";
-import paceholder from '../assets/images/placeholder.png'
 import {Badge, Button, Card, Col, Form, Row, Spinner} from "react-bootstrap";
 import {Link} from "react-router-dom";
 
@@ -8,13 +7,17 @@ function ItemGallery() {
     const title = "Items";
     const [items, setItems] = useState([])
     const [filterText, setFilterText] = useState("");
+    const [images, setImages] = useState([])
 
     const searchItems = items.filter((item) => item.name.toLowerCase().includes(filterText))
 
-    useEffect(updateItems, [])
+    useEffect(updateItems, [items.length])
 
     function updateItems() {
         getItems().then((result) => setItems(result.data))
+        fetch(`https://picsum.photos/v2/list?limit=${items.length}`)
+            .then((response)=> response.json())
+            .then((data)=> setImages(data.map(e=> e.download_url)))
     }
 
     function urgencyIndicator(urgency) {
@@ -72,7 +75,7 @@ function ItemGallery() {
                                     <Link to={`/items/${item.id}`} key={item.id}>
                                         <Col>
                                             <Card className="item">
-                                                <Card.Img variant="top" src={paceholder}/>
+                                                <Card.Img variant="top" src={images[items.indexOf(item)]}/>
                                                 <Card.Body>
                                                     <Card.Title>{item.name}</Card.Title>
                                                     <Card.Text>
